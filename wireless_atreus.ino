@@ -34,20 +34,39 @@ int col_10 = 21;
 int col_9 = 22;
 
 /* layer 1
- *  !    @     up     {    }        ||     pgup    7     8     9    *
+*  !    @     up      {    }        ||     pgup    7     8     9    *
  *  #  left   down  right  $        ||     pgdn    4     5     6    +
  *  [    ]      (     )    &        ||       `     1     2     3    \
  * L2  insert super shift bksp ctrl || alt space   fn    .     0    =
  */
 
+typedef struct {
+  uint8_t modifier;
+  uint8_t keycode;
+} key_stroke_t;
 
-int layers[4][11] =
+// key_stroke_t shift(uint8_t key){
+//   return {K_SHIFT_LEFT, key};
+// }
+
+int layers[2][4][11][2] = {
   {// layer 0
-    {K_Q, K_W, K_E, K_R, K_T, K_NONE, K_Y, K_U, K_I, K_O, K_P},
-    {K_A, K_S, K_D, K_F, K_G, K_NONE, K_H, K_J, K_K, K_L, K_SEMICOLON},
-    {K_Z, K_X, K_C, K_V, K_B, K_CONTROL_LEFT, K_N, K_M, K_COMMA, K_PERIOD, K_SLASH},
-    {K_ESCAPE, K_TAB, K_GUI_LEFT, K_SHIFT_LEFT, K_BACKSPACE, K_ALT_LEFT,K_SPACE,K_NONE,K_MINUS,K_APOSTROPHE,K_RETURN},
-  };
+    {{K_NONE,K_Q}, {K_NONE,K_W}, {K_NONE,K_E}, {K_NONE,K_R}, {K_NONE,K_T}, {K_NONE,K_NONE}, {K_NONE,K_Y}, {K_NONE,K_U}, {K_NONE,K_I}, {K_NONE,K_O}, {K_NONE,K_P}},
+    {{K_NONE,K_A}, {K_NONE,K_S}, {K_NONE,K_D}, {K_NONE,K_F}, {K_NONE,K_G}, {K_NONE,K_NONE}, {K_NONE,K_H}, {K_NONE,K_J}, {K_NONE,K_K}, {K_NONE,K_L}, {K_NONE,K_SEMICOLON}},
+    {{K_NONE,K_Z}, {K_NONE,K_X}, {K_NONE,K_C}, {K_NONE,K_V}, {K_NONE,K_B}, {K_CONTROL_LEFT, K_NONE}, {K_NONE,K_N}, {K_NONE,K_M}, {K_NONE,K_COMMA}, {K_NONE,K_PERIOD}, {K_NONE,K_SLASH}},
+    {{K_NONE,K_ESCAPE}, {K_NONE,K_TAB}, {K_GUI_LEFT,K_NONE}, {K_SHIFT_LEFT,K_NONE}, {K_NONE,K_BACKSPACE}, {K_ALT_LEFT, K_NONE}, {K_NONE,K_SPACE},{K_NONE,K_NONE},{K_NONE,K_MINUS},{K_NONE,K_APOSTROPHE},{K_NONE,K_RETURN}},
+  },{
+     {
+       {K_SHIFT_LEFT,K_1}, {K_SHIFT_LEFT,K_2}, {K_NONE,K_ARROW_UP}, {K_SHIFT_LEFT,K_BRACKET_LEFT}, {K_SHIFT_LEFT,K_BRACKET_RIGHT}, {K_NONE,K_NONE}, {K_NONE,K_PAGE_UP}, {K_NONE,K_7}, {K_NONE,K_8}, {K_NONE,K_9}, {K_SHIFT_LEFT,K_8}
+     },{
+       {K_SHIFT_LEFT,K_3}, {K_NONE,K_ARROW_LEFT}, {K_NONE,K_ARROW_DOWN}, {K_NONE,K_ARROW_RIGHT}, {K_SHIFT_LEFT,K_4},{K_NONE,K_NONE}, {K_NONE,K_PAGE_DOWN}, {K_NONE,K_4},{K_NONE,K_5},{K_NONE,K_6},{K_SHIFT_LEFT,K_EQUAL}
+     },{
+        {K_NONE,K_BRACKET_LEFT}, {K_NONE,K_BRACKET_RIGHT}, {K_SHIFT_LEFT,K_9}, {K_SHIFT_LEFT,K_0}, {K_SHIFT_LEFT,K_7}, {K_CONTROL_LEFT, K_NONE}, {K_NONE,K_GRAVE}, {K_NONE,K_1}, {K_NONE,K_2}, {K_NONE,K_3}, {K_NONE,K_BACKSLASH}
+     },{
+       {K_NONE,K_ESCAPE}, {K_NONE,K_TAB}, {K_GUI_LEFT,K_NONE}, {K_SHIFT_LEFT,K_NONE}, {K_NONE,K_BACKSPACE}, {K_ALT_LEFT, K_NONE}, {K_NONE,K_SPACE}, {K_NONE,K_NONE}, {K_NONE,K_PERIOD}, {K_NONE,K_0}, {K_NONE,K_KEYPAD_EQUAL}
+     }
+  }
+};
 
 hid_keyboard_report_t keyReport = { 0, 0, { 0 } };
 
@@ -138,22 +157,17 @@ void loop() {
 
 void get_keys() {
   int index = 0;
+  int layer = key_pressed(3,7) ? 1 : 0;
   for (size_t column = 0; column < 11; column++) { // column loop
     for (size_t row = 0; row < 4; row++) {
-      pinMode(rows[row], OUTPUT);
-      pinMode(columns[column], INPUT_PULLUP);
-      digitalWrite(rows[row], LOW);
-      key_state = digitalRead(columns[column]);
-      if (!key_state) {
+      bool state = key_pressed(row, column);
+      if (state) {
         if ( ble.isConnected() )
         {
-          int code = layers[row][column];
-          if (code > 0xdf){
-            keyReport.modifier = modifier(code);
-          }else{
-            keyReport.keycode[index] = layers[row][column];
-            index++;
-          }
+          int* key_code = layers[layer][row][column];
+          keyReport.modifier = modifier(key_code[0]);
+          keyReport.keycode[index] = key_code[1];
+          (key_code[1] != 0) ? (index++) : 0;
         }
       }
       pinMode(rows[row], INPUT); //
@@ -162,8 +176,18 @@ void get_keys() {
   }
 }
 
+bool key_pressed(uint8_t row, uint8_t column){
+  pinMode(rows[row], OUTPUT);
+  pinMode(columns[column], INPUT_PULLUP);
+  digitalWrite(rows[row], LOW);
+  key_state = digitalRead(columns[column]);
+  pinMode(rows[row], INPUT); //
+  pinMode(columns[column], INPUT); // we turn off the pullup to save power between cycles
+  return !key_state;
+}
+
 int modifier(int code){
-  int mod;
+  int mod = 0;
   if (code == 0xe0) {
     mod = 0x01;
   } else if (code == 0xe1) {
