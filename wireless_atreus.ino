@@ -26,29 +26,18 @@ int col_2 = 0;
 int col_3 = 3;
 int col_4 = 2;
 int col_5 = 11;
-
-int col_8 = 18;
-int col_7 = 19;
 int col_6 = 20;
-int col_10 = 21;
+int col_7 = 19;
+int col_8 = 18;
 int col_9 = 22;
-
-/* layer 1
-*  !    @     up      {    }        ||     pgup    7     8     9    *
- *  #  left   down  right  $        ||     pgdn    4     5     6    +
- *  [    ]      (     )    &        ||       `     1     2     3    \
- * L2  insert super shift bksp ctrl || alt space   fn    .     0    =
- */
+int col_10 = 21;
 
 typedef struct {
   uint8_t modifier;
   uint8_t keycode;
 } key_stroke_t;
 
-// key_stroke_t shift(uint8_t key){
-//   return {K_SHIFT_LEFT, key};
-// }
-
+// The 'keys' in this keymap have a modifier and a keycode; I tried doing this as a struct but the compiler got mad. :shrug:
 int layers[2][4][11][2] = {
   {// layer 0
     {{K_NONE,K_Q}, {K_NONE,K_W}, {K_NONE,K_E}, {K_NONE,K_R}, {K_NONE,K_T}, {K_NONE,K_NONE}, {K_NONE,K_Y}, {K_NONE,K_U}, {K_NONE,K_I}, {K_NONE,K_O}, {K_NONE,K_P}},
@@ -70,11 +59,7 @@ int layers[2][4][11][2] = {
 
 hid_keyboard_report_t keyReport = { 0, 0, { 0 } };
 
-// Report sent previously. This is used to prevent sending the same report over time.
-// Notes: HID Central intepretes no new report as no changes, which is the same as
-// sending very same report multiple times. This will help to reduce traffic especially
-// when most of the time there is no keys pressed.
-// - Init to different with keyReport
+// Used to re-initalize the report when keys are released/change
 hid_keyboard_report_t previousReport = { 0, 0, { 0 } };
 
 /*
