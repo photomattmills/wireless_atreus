@@ -176,7 +176,7 @@ void setup_service() {
   ble.atcommand("AT+GATTADDSERVICE=UUID=0x180F");
   ble.atcommand("AT+GATTADDCHAR=UUID=0x2A19,PROPERTIES=0x10,MIN_LEN=1,VALUE=100");
   ble.atcommand("AT+GATTCHAR=1,55");
-  !ble.reset();
+  ble.reset();
 }
 
 void loop() {
@@ -184,7 +184,9 @@ void loop() {
 
   if ( ble.isConnected() ){
     get_battery();
+    int start = millis();
     get_keys();
+    Serial.println(millis() - start);
     ble.atcommand("AT+BLEKEYBOARDCODE", (uint8_t*) &keyReport, 8);
     if (battery_percent < 100){
       battery.update(battery_percent);
@@ -217,6 +219,7 @@ void get_keys() {
           (key_code[1] != 0) ? (index++) : 0;
         }
       }
+      
       bool right_state = right_key_pressed(row, column);
       
       digitalWrite(13, right_state);
