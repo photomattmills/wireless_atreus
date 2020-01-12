@@ -18,31 +18,33 @@ typedef struct
   uint8_t keycode[6]; /**< Key codes of the currently pressed keys. */
 } hid_keyboard_report_t;
 
-int row_0 = 1;
-int row_1 = 0;
-int row_2 = 38;
-int row_3 = 18;
-int row_4 = 17;
-int row_5 = 16;
-int row_6 = 15;
-int row_7 = 14;
-int row_8 = 13;
-int row_9 = 12;
-int row_10 = 11;
+int row_0 = 13;
+int row_1 = 12;
+int row_2 = 11;
+int row_3 = 0;
+int row_4 = 1;
+int row_5 = 38;
+int row_6 = 20;
+int row_7 = 21;
+int row_8 = 5;
+int row_9 = 6;
+int row_10 = 9;
 int row_11 = 10;
-int row_12 = 9;
 
-int col_0 = 20;
-int col_1 = 19;
-int col_2 = 21;
-int col_3 = 5;
-int col_4 = 6;
+int col_0 = 14;
+int col_1 = 15;
+int col_2 = 16;
+int col_3 = 17;
+int col_4 = 18;
+int col_5 = 19;
+
+
 
 // I know I could construct these as literal ints, but I like having them named for purposes of easy debugging
 
-int columns[] = {col_0, col_1, col_2, col_3, col_4};
+int columns[] = {col_0, col_1, col_2, col_3, col_4, col_5};
 
-int rows[] = {row_0, row_1, row_2, row_3, row_4, row_5, row_6, row_7, row_8, row_9, row_10, row_11, row_12};
+int rows[] = {row_0, row_1, row_2, row_3, row_4, row_5, row_6, row_7, row_8, row_9, row_10, row_11};
 
 int battery_percent;
 
@@ -52,33 +54,31 @@ typedef struct {
 } key_stroke_t;
 
 // The 'keys' in this keymap have a modifier and a keycode; I tried doing this as a struct but the compiler got mad. :shrug:
-int layers[13][5][2] = {
+int layers[12][6][2] = {
   {
-    {K_NONE, K_EQUAL}, {K_NONE, K_TAB}, {K_CONTROL_LEFT, K_NONE},{K_SHIFT_LEFT, K_NONE}, {K_NONE, K_ESCAPE}
+    {K_NONE, K_EQUAL}, {K_NONE, K_TAB}, {K_CONTROL_LEFT, K_NONE},{K_SHIFT_LEFT, K_NONE}, {K_NONE, K_ESCAPE}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_1},{K_NONE, K_Q},{K_NONE, K_A},{K_NONE, K_Z},{K_NONE, K_GRAVE}
+    {K_NONE, K_1},{K_NONE, K_Q},{K_NONE, K_A},{K_NONE, K_Z},{K_NONE, K_GRAVE}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_2},{K_NONE, K_W},{K_NONE, K_S},{K_NONE, K_X},{K_NONE, K_BRACKET_LEFT}
+    {K_NONE, K_2},{K_NONE, K_W},{K_NONE, K_S},{K_NONE, K_X},{K_NONE, K_BRACKET_LEFT}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_3},{K_NONE, K_E},{K_NONE, K_D},{K_NONE, K_C},{K_NONE, K_BRACKET_RIGHT}
+    {K_NONE, K_3},{K_NONE, K_E},{K_NONE, K_D},{K_NONE, K_C},{K_NONE, K_BRACKET_RIGHT}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_4},{K_NONE, K_R},{K_NONE, K_F},{K_NONE, K_V},{K_SHIFT_LEFT, K_NONE}
+    {K_NONE, K_4},{K_NONE, K_R},{K_NONE, K_F},{K_NONE, K_V},{K_SHIFT_LEFT, K_NONE}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_5},{K_NONE, K_T},{K_NONE, K_G},{K_NONE, K_B},{K_GUI_LEFT, K_NONE}
+    {K_NONE, K_5},{K_NONE, K_T},{K_NONE, K_G},{K_NONE, K_B},{K_GUI_LEFT, K_NONE}, {K_NONE, K_BACKSPACE}
   },{
-    {K_NONE, K_NONE},{K_NONE, K_NONE},{K_NONE, K_NONE},{K_NONE, K_BACKSPACE},{K_NONE, K_RETURN}
+    {K_NONE, K_6},{K_NONE, K_Y},{K_NONE, K_H},{K_NONE, K_N},{K_NONE, K_SPACE}, {K_NONE, K_RETURN}
   },{
-    {K_NONE, K_6},{K_NONE, K_Y},{K_NONE, K_H},{K_NONE, K_N},{K_NONE, K_SPACE}
+    {K_NONE, K_7},{K_NONE, K_U},{K_NONE, K_J},{K_NONE, K_M},{K_NONE, K_ARROW_LEFT}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_7},{K_NONE, K_U},{K_NONE, K_J},{K_NONE, K_M},{K_NONE, K_ARROW_LEFT}
+    {K_NONE, K_8},{K_NONE, K_I},{K_NONE, K_K},{K_NONE, K_COMMA},{K_NONE, K_ARROW_UP}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_8},{K_NONE, K_I},{K_NONE, K_K},{K_NONE, K_COMMA},{K_NONE, K_ARROW_UP}
+    {K_NONE, K_9},{K_NONE, K_O},{K_NONE, K_L},{K_NONE, K_PERIOD},{K_NONE, K_ARROW_RIGHT}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_9},{K_NONE, K_O},{K_NONE, K_L},{K_NONE, K_PERIOD},{K_NONE, K_ARROW_RIGHT}
+    {K_NONE, K_0},{K_NONE, K_P},{K_NONE, K_SEMICOLON},{K_NONE, K_SLASH},{K_NONE, K_ARROW_DOWN}, {K_NONE, K_NONE}
   },{
-    {K_NONE, K_0},{K_NONE, K_P},{K_NONE, K_SEMICOLON},{K_NONE, K_SLASH},{K_NONE, K_ARROW_DOWN}
-  },{
-    {K_NONE, K_MINUS},{K_NONE, K_BACKSLASH},{K_NONE, K_APOSTROPHE},{K_SHIFT_LEFT, K_NONE},{K_ALT_LEFT, K_NONE}
+    {K_NONE, K_MINUS},{K_NONE, K_BACKSLASH},{K_NONE, K_APOSTROPHE},{K_SHIFT_LEFT, K_NONE},{K_ALT_LEFT, K_NONE}, {K_NONE, K_NONE}
   }
 };
 
@@ -135,29 +135,29 @@ void setup() {
   /* Print Bluefruit information */
   ble.info();
 
-  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=Matt's Atreus62" )) ) {
+  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=Matt's iPad KB" )) ) {
     error(F("Could not set device name?"));
   }
 
   /* Enable HID Service i6f not enabled */
-  int32_t hid_en = 1;
-  ble.atcommand("AT+GATTCLEAR");
-  ble.atcommand("AT+GATTADDSERVICE=UUID=0x180F");
-  ble.atcommand("AT+GATTADDCHAR=UUID=0x2A19,PROPERTIES=0x10,MIN_LEN=1,VALUE=100");
-  ble.atcommand("AT+GATTCHAR=1,55");
-  !ble.reset();
+  // int32_t hid_en = 1;
+  // ble.atcommand("AT+GATTCLEAR");
+  // ble.atcommand("AT+GATTADDSERVICE=UUID=0x180F");
+  // ble.atcommand("AT+GATTADDCHAR=UUID=0x2A19,PROPERTIES=0x10,MIN_LEN=1,VALUE=100");
+  // ble.atcommand("AT+GATTCHAR=1,55");
+  // !ble.reset();
 
-  ble.sendCommandWithIntReply( F("AT+BleHIDEn"), &hid_en);
-
-  if ( !hid_en )
-  {
-    Serial.println(F("Enable HID Service (including Keyboard): "));
-    ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ));
-
-    /* Add or remove service requires a reset */
-    Serial.println(F("Performing a SW reset (service changes require a reset): "));
-    !ble.reset();
-  }
+  // ble.sendCommandWithIntReply( F("AT+BleHIDEn"), &hid_en);
+  //
+  // if ( !hid_en )
+  // {
+  //   Serial.println(F("Enable HID Service (including Keyboard): "));
+  //   ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ));
+  //
+  //   /* Add or remove service requires a reset */
+  //   Serial.println(F("Performing a SW reset (service changes require a reset): "));
+  //   !ble.reset();
+  // }
   // ble.atcommand( F("AT+BleBATTEn=On") );
   // !ble.reset();
   /* Enable Battery service if not enabled */
@@ -183,8 +183,8 @@ void get_battery(){}
 void get_keys() {
   int index = 0;
   int layer = key_pressed(3,7) ? 1 : 0;
-  for (size_t column = 0; column < 5; column++) { // column loop
-    for (size_t row = 0; row < 13; row++) {
+  for (size_t column = 0; column < 6; column++) { // column loop
+    for (size_t row = 0; row < 12; row++) {
         bool state = key_pressed(row, column);
         if (state) {
           // Serial.print("column: ");
